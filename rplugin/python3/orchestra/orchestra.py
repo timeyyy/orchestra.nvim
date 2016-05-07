@@ -4,7 +4,6 @@ import random
 
 import orchestra.util as util
 
-AUTOCMDS = ('CursorMoved', 'CursorMovedI')
 CUSTOMCMDS = (),
 
 class Orchestra(util.VimMix):

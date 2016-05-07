@@ -25,14 +25,11 @@ class Main(util.VimMix, object):
         assert len(args) >= 2
         when, *audio = args
         audio = util.get_audio_parts(audio)
-        if when in orch.AUTOCMDS:
+        if when in orch.CUSTOMCMDS:
+            # Custom event type..
+            raise NotImplementedError
+        else:
             @neovim.autocmd(when)
             def func(nvim):
                 self.orch.queue_audio(audio)
             setattr(self, '_'+when, func)
-        elif when in orch.CUSTOMCMDS:
-            # Custom event type..
-            raise NotImplementedError
-        else:
-            # TODO send error message to vim
-            raise ValueError('Wrong command')
