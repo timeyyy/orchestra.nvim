@@ -1,13 +1,28 @@
+import _thread as thread
+import queue
 
 import orchestra.util as util
 
-class Orchestra():
+AUTOCMDS = ('CursorMoved',)
+CUSTOMCMDS = (),
+
+class Orchestra(util.VimMix):
     def __init__(self, vim):
         self.vim = vim
+        self._audio_queue = queue.Queue()
+        self.consume()
 
-    def cursor_moved(self):
-        util.play_sound('woosh.wav')
+    def consume(self):
+        def do():
+            while True:
+                try:
+                    audio = self._audio_queue.get(block=True)
+                except queue.Empty:
+                    pass
+                else:
+                    thread.start_new_thread(
+                                    util.play_sound,(audio,))
+        thread.start_new_thread(do, (),)
 
-    def position_has_changed(self, pos):
-        return (pos != self.vim.current.window.cursor or
-                self.vim.funcs.mode() != 'i')
+    def queue_audio(self, audio):
+        self._audio_queue.put(audio)
