@@ -8,7 +8,7 @@ class Main(util.VimMix, object):
     def __init__(self, vim):
         self.vim = vim
         self.orch = orch.Orchestra(vim)
-        self.ensemble(('CursorMovedI', 'keyboard_slow.wav'))
+        # self.ensemble(('CursorMovedI', 'keyboard_slow.wav'))
 
     @neovim.function('Ensemble')
     def ensemble(self, args):
@@ -22,6 +22,7 @@ class Main(util.VimMix, object):
         until keys_n+1 doesn't exist.
         starts from _1 not _0
         '''
+        self.echom('done')
         assert len(args) >= 2
         when, *audio = args
         audio = util.get_audio_parts(audio)

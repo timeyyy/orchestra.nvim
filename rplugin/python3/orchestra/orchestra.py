@@ -11,6 +11,7 @@ class Orchestra(util.VimMix):
         self.vim = vim
         self._audio_queue = queue.Queue()
         self.consume()
+        self.load_theme()
 
     def consume(self):
         def do():
@@ -31,3 +32,9 @@ class Orchestra(util.VimMix):
     
     def queue_audio(self, audio):
         self._audio_queue.put(audio)
+
+    def load_theme(self):
+        theme = self.vim.eval('g:orchestra#symphony')
+        self.echom(theme)
+        # self.vim.command('source {0}/{0}.vim'.format(theme))
+        
