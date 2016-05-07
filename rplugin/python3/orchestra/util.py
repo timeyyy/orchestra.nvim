@@ -1,12 +1,18 @@
+import os
 import wave
 
 import pyaudio
 
 
-# length of data to read.
-chunk = 1024
+class VimMix():
+    def echom(self, thing):
+        self.vim.command('echom "{0}"'.format(thing))
 
-def play_sound(file):
+
+def play_sound(file, chunk=1024):
+    '''
+    chunk = length of data to read.
+    '''
     # open the file for reading.
     wf = wave.open(file, 'rb')
 
@@ -33,9 +39,45 @@ def play_sound(file):
     stream.close()    
     p.terminate()
 
-class VimMix():
-    def echom(self, thing):
-        self.vim.command('echom "{0}"'.format(thing))
+
+def etb(func, *args, **kwargs):
+    '''
+    error to bool
+    '''
+    try:
+        return func(*args, **kwargs)
+    except Exception:
+        return False
+
+
+def get_audio_parts(audio):
+    '''
+    see orchestra.__init__.ensemble
+    '''
+    def plus1(file):
+        path, ext = os.path.splitext(file)
+        split = path.split('_')
+        old_num = etb(int, split[-1])
+        if not old_num:
+            split.append('1')
+        else:
+            split[-1] = str(old_num + 1)
+        return '_'.join(split) + ext
+
+    parts = []
+    for file in audio:
+        if os.path.exists(file):
+            parts.append(file)
+        part = plus1(file)
+        print(part)
+        while os.path.exists(part):
+            parts.append(part)
+            part = plus1(part)
+    print('retuning')
+    return parts
+
 
 if __name__ == '__main__':
-    play_sound('woosh.wav')
+    # play_sound('woosh.wav')
+    print(os.getcwd())
+    print(get_audio_parts(['keyboard_slow.wav']))

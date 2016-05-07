@@ -1,9 +1,10 @@
 import _thread as thread
 import queue
+import random
 
 import orchestra.util as util
 
-AUTOCMDS = ('CursorMoved',)
+AUTOCMDS = ('CursorMoved', 'CursorMovedI')
 CUSTOMCMDS = (),
 
 class Orchestra(util.VimMix):
@@ -21,8 +22,13 @@ class Orchestra(util.VimMix):
                     pass
                 else:
                     thread.start_new_thread(
-                                    util.play_sound,(audio,))
+                                    self._play_sound,(audio,))
         thread.start_new_thread(do, (),)
 
+    def _play_sound(self, audio):
+        # Pick an auido from random
+        index = random.randint(0, len(audio)-1)
+        util.play_sound(audio[index])
+    
     def queue_audio(self, audio):
         self._audio_queue.put(audio)
