@@ -1,5 +1,7 @@
-import pyaudio
 import wave
+
+import pyaudio
+
 
 # length of data to read.
 chunk = 1024
@@ -30,6 +32,10 @@ def play_sound(file):
     # cleanup stuff.
     stream.close()    
     p.terminate()
+
+class VimMix():
+    def echom(self, thing):
+        self.vim.command('echom "{0}"'.format(thing))
 
 if __name__ == '__main__':
     play_sound('woosh.wav')
