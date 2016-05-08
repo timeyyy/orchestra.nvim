@@ -50,7 +50,7 @@ def etb(func, *args, **kwargs):
         return False
 
 
-def get_audio_parts(audio):
+def get_audio_parts(file):
     '''
     see orchestra.__init__.ensemble
     '''
@@ -65,19 +65,20 @@ def get_audio_parts(audio):
         return '_'.join(split) + ext
 
     parts = []
-    for file in audio:
-        if os.path.exists(file):
-            parts.append(file)
-        part = plus1(file)
-        print(part)
-        while os.path.exists(part):
-            parts.append(part)
-            part = plus1(part)
-    print('retuning')
+    if os.path.exists(file):
+        parts.append(file)
+    part = plus1(file)
+    while os.path.exists(part):
+        parts.append(part)
+        part = plus1(part)
     return parts
 
 
+
+
+
 if __name__ == '__main__':
-    # play_sound('woosh.wav')
+    import os
+    play_sound(os.path.abspath('woosh.wav'))
     print(os.getcwd())
     print(get_audio_parts(['keyboard_slow.wav']))
