@@ -10,12 +10,14 @@ class Main(util.VimMix, object):
         # Anything called from this __in__ cannot run
         # any commands in vim, otherwise wierd errors happen!!!
         self.vim = vim
-        self.DEBUG = False
+        self.DEBUG = True
         self.orch = orch.Orchestra(vim, main=self)
         self.orch.DEBUG = self.DEBUG
         self.setup_functions()
         if self.DEBUG:
-            self.logger = util.setup_logger('orchestra.log')
+            self.logger = util.setup_logger('log_orchestra.log')
+            self.orch.logger= self.logger
+            self.logger.add('Finish Plugin __init__')
 
     @neovim.function('Ostinato')
     def ostinato(self, args):
