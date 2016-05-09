@@ -27,6 +27,13 @@ I use dein.vim
 call dein#add('timeyyy/orchestra.nvim')
 ```
 
+Then run 
+```VimL
+call dein#install()
+UpdateRemotePlugins
+```
+
+
 ### <a id="dependencies"></a>Dependencies 
  * python3
  * the neovim client for python - `pip install neovim`
