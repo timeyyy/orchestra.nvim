@@ -1,3 +1,4 @@
+import os
 import neovim
 
 import orchestra.orchestra as orch
@@ -11,7 +12,8 @@ class Main(util.VimMix, object):
         self.vim = vim
         self.orch = orch.Orchestra(vim, main=self)
         self.setup_functions()
-        self.logger = util.setup_logger('orchestra.log')
+        self.logger = util.setup_logger(
+                        os.path.join(__file__, 'orchestra.log'))
 
     @neovim.function('Ensemble')
     def ensemble(self, args):
