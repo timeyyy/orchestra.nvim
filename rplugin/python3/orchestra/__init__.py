@@ -17,8 +17,8 @@ class Main(util.VimMix, object):
         if self.DEBUG:
             self.logger = util.setup_logger('orchestra.log')
 
-    @neovim.function('Ensemble')
-    def ensemble(self, args):
+    @neovim.function('Ostinato')
+    def ostinato(self, args):
         '''
         Register a autocommand to an audio file,
         for each audio file you can have multiple
@@ -30,7 +30,7 @@ class Main(util.VimMix, object):
         starts from _1 not _0
         '''
         assert len(args) >= 2
-        self.orch.ensemble(*args)
+        self.orch.ostinato(*args)
 
     @neovim.function('OrchestraSetTheme', sync=True)
     def set_theme(self, args):

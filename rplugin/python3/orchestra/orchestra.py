@@ -72,7 +72,7 @@ class ThemeMix(util.VimMix):
 
 
 class FunctionsMix(util.VimMix):
-    def ensemble(self, event, *audio):
+    def ostinato(self, event, *audio):
         audio = self.get_audio(audio)
         if event in CUSTOMCMDS:
             # Custom event type.. spit out into another func?
