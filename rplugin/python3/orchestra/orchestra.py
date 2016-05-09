@@ -3,13 +3,16 @@ import queue
 import random
 import os
 
+import neovim
+
 import orchestra.util as util
 
 CUSTOMCMDS = (),
 
-# class used just for seperation of logic
-class Theme(util.VimMix):
+
+class ThemeMix(util.VimMix):
     def __init__(self):
+        super().__init__()
         self.audio_paths = {}
         self.audio_paths[None] = os.path.dirname(__file__)
         self.theme = None
@@ -67,7 +70,21 @@ class Theme(util.VimMix):
         return found
 
 
-class Orchestra(Theme):
+class FunctionsMix(util.VimMix):
+    def ensemble(self, main, when, *audio):
+        audio = self.get_audio(audio)
+        if when in CUSTOMCMDS:
+            # Custom event type..
+            raise NotImplementedError
+        else:
+            @neovim.autocmd(when)
+            def func(nvim):
+                self.echom('adding to queue')
+                self.queue_audio(audio)
+            setattr(main, '_'+when, func)
+
+
+class Orchestra(ThemeMix, FunctionsMix):
     def __init__(self, vim):
         # cannot run any commands in vim, as this is 
         # called from pluging __init__, otherwise wierd

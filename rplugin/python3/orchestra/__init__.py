@@ -12,7 +12,7 @@ class Main(util.VimMix, object):
         self.orch = orch.Orchestra(vim)
         # self.ensemble(('CursorMoved', 'woosh.wav'))
 
-    @neovim.function('Ensemble', sync=True)
+    @neovim.function('Ensemble')
     def ensemble(self, args):
         '''
         Register a autocommand to an audio file,
@@ -25,17 +25,7 @@ class Main(util.VimMix, object):
         starts from _1 not _0
         '''
         assert len(args) >= 2
-        when, *audio = args
-        audio = self.orch.get_audio(audio)
-        if when in orch.CUSTOMCMDS:
-            # Custom event type..
-            raise NotImplementedError
-        else:
-            @neovim.autocmd(when)
-            def func(nvim):
-                self.echom('adding to queue')
-                self.orch.queue_audio(audio)
-            setattr(self, '_'+when, func)
+        self.orch.ensemble(self, *args)
 
     @neovim.function('OrchestraSetTheme', sync=True)
     def set_theme(self, args):
