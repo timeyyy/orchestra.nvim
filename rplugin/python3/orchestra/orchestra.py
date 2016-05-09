@@ -23,6 +23,7 @@ class ThemeMix(util.VimMix):
         '''
         self.theme = theme
         self.theme_path = 'autoload'
+        # TODO MAKE THIS ERROR OUT IF IT DOESN'T FIND ANYTHING
         self.vim.command('runtime! {0}/{1}.vim'.format(
                                         self.theme_path,
                                         theme))
