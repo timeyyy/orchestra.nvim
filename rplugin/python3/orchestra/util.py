@@ -1,5 +1,6 @@
 import os
 import wave
+import platform
 
 import pyaudio
 
@@ -13,12 +14,12 @@ def play_sound(file, chunk=1024):
     '''
     chunk = length of data to read.
     '''
+    if not os.path.isfile(file):
+        return False
     # open the file for reading.
     wf = wave.open(file, 'rb')
-
     # create an audio object
     p = pyaudio.PyAudio()
-
     # open stream based on the wave object which has been input.
     stream = p.open(format =
                     p.get_format_from_width(wf.getsampwidth()),
@@ -28,16 +29,15 @@ def play_sound(file, chunk=1024):
 
     # read data (based on the chunk size)
     data = wf.readframes(chunk)
-
     # play stream (looping from beginning of file to the end)
     while data != '':
         # writing to the stream is what *actually* plays the sound.
         stream.write(data)
         data = wf.readframes(chunk)
-
     # cleanup stuff.
     stream.close()    
     p.terminate()
+    return True
 
 
 def etb(func, *args, **kwargs):
@@ -74,11 +74,100 @@ def get_audio_parts(file):
     return parts
 
 
+class InMemoryWriter(list, object):
+    """
+    simplify editing files
+    On creation you can read all contents either from:
+    an open file,
+    a list
+    a path/name to a file
+    While iterating you can set copy=True to edit data
+    as you iterate over it
+    you can accesses the current position using self.i, useful if
+    you are using filter or something like that while iterating
+    """
+
+    def __init__(self, file=None, copy=False):
+        list.__init__(self)
+        self.copy = copy
+        self.data = self
+        if isinstance(file, str):
+            try:
+                with open(file, 'r') as f:
+                    self.writelines(f)
+                    self.original_filename = file
+            except FileNotFoundError as err:
+                raise err
+        elif file:
+            self.writelines(file)
+
+    def write(self, stuff):
+        self.append(stuff)
+
+    def writelines(self, passed_data):
+        for item in passed_data:
+            self.data.append(item)
+
+    def __call__(self, copy=None):
+        if copy:
+            self.copy = True
+        return self
+
+    def __iter__(self):
+        self.i = 0
+        if self.copy:
+            self.data_copy = self.data[:]
+        return self
+
+    def __next__(self):
+        if self.i + 1 > len(self.data):
+            try:
+                del self.data_copy
+            except AttributeError:
+                pass
+            raise StopIteration
+        if not self.copy:
+            requested = self.data[self.i]
+        else:
+            requested = self.data_copy[self.i]
+        self.i += 1
+        return requested
+
+    def close(self):
+        pass
+
+    def readlines(self):
+        return self.data
+
+    def save(self, path=False):
+        if not path:
+            path = self.original_filename
+        with open(path, 'w') as file:
+            for row in self.data:
+                file.write(row)
+
+    def add(self, thing):
+        self.write(thing+'\n')
+        self.save()
 
 
+def setup_logger(log_file):
+    '''
+    couldn't get logging module to work fml...
+    just call file.add()
+    '''
+    if os.path.exists(log_file):
+        os.remove(log_file)
+    open(log_file, 'w').close()
+
+    file = InMemoryWriter(log_file)
+    file.add('System is: %s' % platform.platform())
+    file.add('Python archetecture is: %s' %
+                                    platform.architecture()[0])
+    file.add('Machine archetecture is: %s' %
+                                    platform.machine())
+    return file
 
 if __name__ == '__main__':
-    import os
     play_sound(os.path.abspath('woosh.wav'))
-    print(os.getcwd())
-    print(get_audio_parts(['keyboard_slow.wav']))
+    # print(get_audio_parts(['keyboard_slow.wav']))
