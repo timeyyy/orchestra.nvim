@@ -97,7 +97,9 @@ class FunctionsMix(util.VimMix):
                                                    event=event,
                                                    cmd=cmd))
             self.vim.command("augroup END")
-            self.main.logger.add('made new autocmd for ' + func_name)
+            if self.main.DEBUG:
+                self.main.logger.add('made new autocmd for '
+                                                    + func_name)
 
     def _build_cmd(self, func_name, audio):
         # To handle variable length arugements 
