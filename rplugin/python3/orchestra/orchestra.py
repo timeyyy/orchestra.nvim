@@ -8,7 +8,7 @@ import neovim
 import orchestra.util as util
 
 CUSTOMCMDS = (),
-
+AUTOCMDS = ('CursorMoved', 'CursorMovedI')
 
 class ThemeMix(util.VimMix):
     def __init__(self):
@@ -66,31 +66,59 @@ class ThemeMix(util.VimMix):
                         found.extend(audio_parts)
                         break
                 else:
-                    raise ValueError('Could not find ' + track)
+                    raise FileNotFoundError('Could not find: '
+                                            + track)
         return found
 
 
 class FunctionsMix(util.VimMix):
-    def ensemble(self, main, when, *audio):
+    def ensemble(self, event, *audio):
         audio = self.get_audio(audio)
-        if when in CUSTOMCMDS:
-            # Custom event type..
+        if event in CUSTOMCMDS:
+            # Custom event type.. spit out into another func?
             raise NotImplementedError
         else:
-            @neovim.autocmd(when)
-            def func(nvim):
-                self.echom('adding to queue')
-                self.queue_audio(audio)
-            setattr(main, '_'+when, func)
+            # TODO reinstate this and remove setup_functions
+            # when neovim updates..
+            # @neovim.autocmd(event)
+            # def func(nvim):
+                # self.echom('adding to queue')
+                # self.queue_audio(audio)
+            func_name = 'Orchestra_' + event
+            # setattr(self.main, func_name, func)
+            # TODO extend for multple aruguments
+            # assert len(audio) == 1
+            # cmd = "call {}('{}')".format(
+                        # func_name, *audio)
+            cmd = self._build_cmd(func_name, audio)
+            self.vim.command("augroup " + func_name)
+            self.vim.command("autocmd!")
+            self.vim.command("autocmd {event} * {cmd}".format(
+                                                   event=event,
+                                                   cmd=cmd))
+            self.vim.command("augroup END")
+            self.main.logger.add('made new autocmd for ' + func_name)
+
+    def _build_cmd(self, func_name, audio):
+        # To handle variable length arugements 
+        parts = ['call {}'.format(func_name)]
+        parts.append('(')
+        brackets = "'{}'," * len(audio)
+        # Remove the last comma
+        parts.append(brackets[:-1])
+        parts.append(')')
+        formatstr = ''.join(parts)
+        return formatstr.format(*audio)
 
 
 class Orchestra(ThemeMix, FunctionsMix):
-    def __init__(self, vim):
+    def __init__(self, vim, main):
         # cannot run any commands in vim, as this is 
         # called from pluging __init__, otherwise wierd
         # errors happen!!!
         super().__init__()
         self.vim = vim
+        self.main = main
         self._audio_queue = queue.Queue()
         self.consume()
 
@@ -109,7 +137,9 @@ class Orchestra(ThemeMix, FunctionsMix):
     def _play_sound(self, audio):
         # Pick audio from random
         index = random.randint(0, len(audio)-1)
-        util.play_sound(audio[index])
+        check = util.play_sound(audio[index])
+        if not check:
+            raise Exception('should fail in get_audio-parts...')
 
     def queue_audio(self, audio):
         self._audio_queue.put(audio)

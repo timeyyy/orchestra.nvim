@@ -9,8 +9,9 @@ class Main(util.VimMix, object):
         # Anything called from this __in__ cannot run
         # any commands in vim, otherwise wierd errors happen!!!
         self.vim = vim
-        self.orch = orch.Orchestra(vim)
-        # self.ensemble(('CursorMoved', 'woosh.wav'))
+        self.orch = orch.Orchestra(vim, main=self)
+        self.setup_functions()
+        self.logger = util.setup_logger('orchestra.log')
 
     @neovim.function('Ensemble')
     def ensemble(self, args):
@@ -25,7 +26,7 @@ class Main(util.VimMix, object):
         starts from _1 not _0
         '''
         assert len(args) >= 2
-        self.orch.ensemble(self, *args)
+        self.orch.ensemble(*args)
 
     @neovim.function('OrchestraSetTheme', sync=True)
     def set_theme(self, args):
@@ -38,4 +39,19 @@ class Main(util.VimMix, object):
         assert len(args) == 1
         abs_path_theme = args[0]
         self.orch.add_path(abs_path_theme)
+
+    def setup_functions(self):
+        '''
+        For the moment neovim handlers for functions
+        only get checked at startup.
+        We define a bunch of functions so autocommands
+        can we registered to them.
+        '''
+        # TODO Remove this when neovim updates
+        for event in orch.AUTOCMDS:
+            func_name = 'Orchestra_' + event
+            @neovim.function(func_name)
+            def func(nvim, audio):
+                self.orch.queue_audio(audio)
+            setattr(self, func_name, func)
 
