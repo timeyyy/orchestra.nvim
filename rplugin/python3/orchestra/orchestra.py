@@ -7,8 +7,6 @@ import neovim
 
 import orchestra.util as util
 
-CUSTOMCMDS = (),
-AUTOCMDS = ('CursorMoved', 'CursorMovedI')
 
 class ThemeMix(util.VimMix):
     def __init__(self):
@@ -75,10 +73,11 @@ class ThemeMix(util.VimMix):
 class FunctionsMix(util.VimMix):
     def ostinato(self, event, *audio):
         audio = self.get_audio(audio)
-        if event in CUSTOMCMDS:
+        if event in util.CUSTOMCMDS:
             # Custom event type.. spit out into another func?
             raise NotImplementedError
         else:
+            assert event in util.AUTOCMDS
             # TODO reinstate this and remove setup_functions
             # when neovim updates..
             # @neovim.autocmd(event)

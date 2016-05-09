@@ -4,6 +4,35 @@ import platform
 
 import pyaudio
 
+CUSTOMCMDS = (),
+
+AUTOCMDS = (
+    'BufNewFile', 'BufReadPre', 'BufRead', 'BufReadPost',
+    'BufReadCmd', 'FileReadPre', 'FileReadPost', 'FileReadCmd',
+    'FilterReadPre', 'FilterReadPost', 'StdinReadPre',
+    'StdinReadPost', 'BufWrite', 'BufWritePre', 'BufWritePost',
+    'BufWriteCmd', 'FileWritePre', 'FileWritePost',
+    'FileWriteCmd', 'FileAppendPre', 'FileAppendPost',
+    'FileAppendCmd', 'FilterWritePre', 'FilterWritePost',
+    'BufAdd', 'BufCreate', 'BufDelete', 'BufWipeout',
+    'BufFilePre', 'BufFilePost', 'BufEnter', 'BufLeave',
+    'BufWinEnter', 'BufWinLeave', 'BufUnload', 'BufHidden',
+    'BufNew', 'SwapExists', 'TermOpen', 'TermClose',
+    'FileType', 'Syntax', 'EncodingChanged', 'TermChanged',
+    'OptionSet', 'VimEnter', 'GUIEnter', 'GUIFailed',
+    'TermResponse', 'QuitPre', 'VimLeavePre', 'VimLeave',
+    'FileChangedShell', 'FileChangedShellPost', 'FileChangedRO',
+    'ShellCmdPost', 'ShellFilterPost', 'CmdUndefined',
+    'FuncUndefined', 'SpellFileMissing', 'SourcePre', 'SourceCmd',
+    'VimResized', 'FocusGained', 'FocusLost', 'CursorHold',
+    'CursorHoldI', 'CursorMoved', 'CursorMovedI', 'WinEnter',
+    'WinLeave', 'TabEnter', 'TabLeave', 'TabNew',
+    'TabNewEntered', 'TabClosed', 'CmdwinEnter', 'CmdwinLeave',
+    'InsertEnter', 'InsertChange', 'InsertLeave', 'InsertCharPre',
+    'TextYankPost', 'TextChanged', 'TextChangedI', 'ColorScheme',
+    'RemoteReply', 'QuickFixCmdPre', 'QuickFixCmdPost',
+    'SessionLoadPost', 'MenuPopup', 'CompleteDone', 'User',)
+
 
 class VimMix():
     def echom(self, thing):

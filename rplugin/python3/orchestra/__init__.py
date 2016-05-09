@@ -10,7 +10,7 @@ class Main(util.VimMix, object):
         # Anything called from this __in__ cannot run
         # any commands in vim, otherwise wierd errors happen!!!
         self.vim = vim
-        self.DEBUG = True
+        self.DEBUG = False
         self.orch = orch.Orchestra(vim, main=self)
         self.orch.DEBUG = self.DEBUG
         self.setup_functions()
@@ -54,7 +54,7 @@ class Main(util.VimMix, object):
         can we registered to them.
         '''
         # TODO Remove this when neovim updates
-        for event in orch.AUTOCMDS:
+        for event in util.AUTOCMDS:
             func_name = 'Orchestra_' + event
             @neovim.function(func_name)
             def func(nvim, audio):
