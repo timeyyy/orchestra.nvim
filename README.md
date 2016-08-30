@@ -11,6 +11,11 @@
 
 __Status = ALPHA i.e api may change/improve__
 
+#### News
+
+ * (Distorition and delay)[https://github.com/timeyyy/orchestra.nvim/pull/2] fixed. Many thanks IndicaInkwell!
+
+
 ## <a id="introduction"></a>Introduction
 
 Orchestra.nvim is a plugin for nevim that lets you bind sound effects
@@ -49,7 +54,10 @@ call dein#add('timeyyy/clacklack.symphony')
 
 call orchestra#prelude()
 call orchestra#set_tune('clackclack')
-``` 
+```
+
+[List of Themes](https://github.com/timeyyy/orchestra.nvim/wiki/Themes)
+
 
 ### <a id="configuring"></a>Configuring
 
@@ -72,7 +80,7 @@ let s:current_file = resolve(expand('<sfile>:p'))
 call OrchestraAddPath(s:current_file)
 ```
 
-We can now customize the behavior of our script.  For the moment we only `Ostinato` which is just autocmds.
+We can now customize the behavior of our script.  For the moment we only have `Ostinato` which is just autocmds.
 
 ```VimL
 call Ostinato('CursorMovedI', 'flap.wav')
