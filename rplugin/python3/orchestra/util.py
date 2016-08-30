@@ -1,6 +1,9 @@
 import os
 import wave
 import platform
+import threading
+from functools import wraps
+import time
 
 import pyaudio
 
@@ -196,6 +199,60 @@ def setup_logger(log_file):
     file.add('Machine archetecture is: %s' %
                                     platform.machine())
     return file
+
+
+def rate_limited(max_per_second, mode='wait', delay_first_call=False):
+    """
+    Decorator that make functions not be called faster than
+
+    set mode to 'kill' to just ignore requests that are faster than the
+    rate.
+
+    set mode to 'refresh_timer' to reset the timer on successive calls
+
+    set delay_first_call to True to delay the first call as well
+    """
+    lock = threading.Lock()
+    min_interval = 1.0 / float(max_per_second)
+    def decorate(func):
+        last_time_called = [0.0]
+        @wraps(func)
+        def rate_limited_function(*args, **kwargs):
+            def run_func():
+                lock.release()
+                ret = func(*args, **kwargs)
+                last_time_called[0] = time.perf_counter()
+                return ret
+            lock.acquire()
+            elapsed = time.perf_counter() - last_time_called[0]
+            left_to_wait = min_interval - elapsed
+            if delay_first_call:
+                if left_to_wait > 0:
+                    if mode == 'wait':
+                        time.sleep(left_to_wait)
+                        return run_func()
+                    elif mode == 'kill':
+                        lock.release()
+                        return
+                else:
+                    return run_func()
+            else:
+                if not last_time_called[0] or elapsed > min_interval:
+                    return run_func()
+                elif mode == 'refresh_timer':
+                    print('Ref timer')
+                    lock.release()
+                    last_time_called[0] += time.perf_counter()
+                    return
+                elif left_to_wait > 0:
+                    if mode == 'wait':
+                        time.sleep(left_to_wait)
+                        return run_func()
+                    elif mode == 'kill':
+                        lock.release()
+                        return
+        return rate_limited_function
+    return decorate
 
 if __name__ == '__main__':
     play_sound(os.path.abspath('woosh.wav'))

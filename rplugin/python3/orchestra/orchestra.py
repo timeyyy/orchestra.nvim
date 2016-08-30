@@ -115,7 +115,7 @@ class FunctionsMix(util.VimMix):
 
 class Orchestra(ThemeMix, FunctionsMix):
     def __init__(self, vim, main):
-        # cannot run any commands in vim, as this is 
+        # cannot run any commands in vim, as this is
         # called from pluging __init__, otherwise wierd
         # errors happen!!!
         super().__init__()
@@ -143,5 +143,6 @@ class Orchestra(ThemeMix, FunctionsMix):
         if not check:
             raise Exception('should fail in get_audio-parts...')
 
+    @util.rate_limited(5, mode='kill')
     def queue_audio(self, audio):
         self._audio_queue.put(audio)
