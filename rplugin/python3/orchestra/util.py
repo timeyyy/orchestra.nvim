@@ -40,9 +40,7 @@ class VimMix():
 
 
 def play_sound(file):
-    '''
-    chunk = length of data to read.
-    '''
+
     if not os.path.isfile(file):
         return False
 
