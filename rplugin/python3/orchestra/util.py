@@ -42,12 +42,11 @@ class VimMix():
         self.vim.command('echom "{0}"'.format(thing))
 
 
-def play_sound(file, chunk=1024):
-    '''
-    chunk = length of data to read.
-    '''
+def play_sound(file):
+
     if not os.path.isfile(file):
         return False
+
     # open the file for reading.
     wf = wave.open(file, 'rb')
     # create an audio object
@@ -59,13 +58,11 @@ def play_sound(file, chunk=1024):
                     rate = wf.getframerate(),
                     output = True)
 
-    # read data (based on the chunk size)
-    data = wf.readframes(chunk)
-    # play stream (looping from beginning of file to the end)
-    while data != '':
-        # writing to the stream is what *actually* plays the sound.
-        stream.write(data)
-        data = wf.readframes(chunk)
+    # read data
+    data = wf.readframes(wf.getnframes())
+    # play sound
+    stream.write(data)
+
     # cleanup stuff.
     stream.close()    
     p.terminate()
