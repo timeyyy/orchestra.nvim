@@ -13,14 +13,14 @@ __Status = ALPHA i.e api may change/improve__
 
 #### News
 
- * (Distorition and delay)[https://github.com/timeyyy/orchestra.nvim/pull/2] fixed. Many thanks IndicaInkwell!
+ * [Distorition and delay](https://github.com/timeyyy/orchestra.nvim/pull/2) fixed. Many thanks IndicaInkwell!
 
 
 ## <a id="introduction"></a>Introduction
 
-Orchestra.nvim is a plugin for nevim that lets you bind sound effects
+Orchestra.nvim is a plugin for neovim that lets you bind sound effects
 to different actions.  The motivation was mostly for fun but it seems 
-useful for training good vim habits. You can literally hear unproductivy
+useful for training good vim habits. You can literally hear unproductivity
 and when/where you could improve.
 
 
