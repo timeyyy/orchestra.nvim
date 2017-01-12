@@ -10,7 +10,6 @@ import neovim
 
 import orchestra.util as util
 
-
 class ThemeMix(util.VimMix):
     def __init__(self):
         super().__init__()
@@ -125,9 +124,8 @@ class Orchestra(ThemeMix, FunctionsMix):
         self.vim = vim
         self.main = main
         self._audio_queue = queue.Queue()
-        self.ex = futures.ThreadPoolExecutor(max_workers=16)
+        self.ex = futures.ThreadPoolExecutor(max_workers=8)
         self.consume()
-
     def consume(self):
         '''
         check the audio queue for things to play
@@ -149,6 +147,6 @@ class Orchestra(ThemeMix, FunctionsMix):
         if not check:
             raise Exception('should fail in get_audio-parts...')
 
-    # @util.rate_limited(16, mode='kill')
+    @util.rate_limited(10, mode='kill')
     def queue_audio(self, audio):
         self._audio_queue.put(audio)
