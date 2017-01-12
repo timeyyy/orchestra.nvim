@@ -1,4 +1,7 @@
 import _thread as thread
+# from threading import Thread
+# import threading
+from concurrent import futures
 import queue
 import random
 import os
@@ -43,7 +46,7 @@ class ThemeMix(util.VimMix):
         the current theme has priority, otherwise
         search all other paths
         '''
-        # TODO COPY IN THE THE TRACK IF IT DOESNT 
+        # TODO COPY IN THE THE TRACK IF IT DOESNT
         # EXIST IN THE THEME THAT IS USING IT
         # TODO if multiple tracks with a name exist
         # and md5 differ
@@ -57,7 +60,7 @@ class ThemeMix(util.VimMix):
             if audio_parts:
                 found.extend(audio_parts)
             else:
-                # TODO this is untested :( 
+                # TODO this is untested :(
                 for theme, path in self.audio_paths.items():
                     audio_parts = util.get_audio_parts(
                                     os.path.join(path, track))
@@ -65,8 +68,7 @@ class ThemeMix(util.VimMix):
                         found.extend(audio_parts)
                         break
                 else:
-                    raise FileNotFoundError('Could not find: '
-                                            + track)
+                    raise FileNotFoundError('Could not find: ' + track)
         return found
 
 
@@ -102,7 +104,7 @@ class FunctionsMix(util.VimMix):
                                                     + func_name)
 
     def _build_cmd(self, func_name, audio):
-        # To handle variable length arugements 
+        # To handle variable length arugements
         parts = ['call {}'.format(func_name)]
         parts.append('(')
         brackets = "'{}'," * len(audio)
@@ -115,16 +117,20 @@ class FunctionsMix(util.VimMix):
 
 class Orchestra(ThemeMix, FunctionsMix):
     def __init__(self, vim, main):
-        # cannot run any commands in vim, as this is
+        # cannot run vim comamands here, as this is
         # called from pluging __init__, otherwise wierd
         # errors happen!!!
         super().__init__()
         self.vim = vim
         self.main = main
         self._audio_queue = queue.Queue()
+        self.ex = futures.ThreadPoolExecutor(max_workers=16)
         self.consume()
 
     def consume(self):
+        '''
+        check the audio queue for things to play
+        '''
         def do():
             while True:
                 try:
@@ -132,8 +138,7 @@ class Orchestra(ThemeMix, FunctionsMix):
                 except queue.Empty:
                     pass
                 else:
-                    thread.start_new_thread(
-                                    self._play_sound, (audio,))
+                    self.ex.submit(self._play_sound, audio)
         thread.start_new_thread(do, (),)
 
     def _play_sound(self, audio):
@@ -143,6 +148,6 @@ class Orchestra(ThemeMix, FunctionsMix):
         if not check:
             raise Exception('should fail in get_audio-parts...')
 
-    @util.rate_limited(5, mode='kill')
+    # @util.rate_limited(16, mode='kill')
     def queue_audio(self, audio):
         self._audio_queue.put(audio)
