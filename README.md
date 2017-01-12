@@ -7,13 +7,12 @@
 - [Usage](#usage)
     - [Plug and Play](#plugandplay)
     - [Configuring](#configuring)
-- [Development](#development)
 
 __Status = ALPHA i.e api may change/improve__
 
 #### News
 
- * [Distorition and delay](https://github.com/timeyyy/orchestra.nvim/pull/2) fixed. Many thanks IndicaInkwell!
+ * [New bubbletrouble theme](https://github.com/timeyyy/bubbletrouble.symphony)
 
 
 ## <a id="introduction"></a>Introduction
@@ -63,14 +62,14 @@ call orchestra#set_tune('clackclack')
 
 Themes are just normal vim plugins with a few requirements.
 
-e.g theme "bumblebee\_flight": 
+e.g theme "bumblebee\_flight":
 
     autoload/
         bumblebee_flight.vim             - the main file
         buzz.wav                          - audio file
-        flap.wav 
-        flap_1.wav 
-        flap_2.wav 
+        flap.wav
+        flap_1.wav
+        flap_2.wav
 
 bublebee\_flight.vim:
 
@@ -93,9 +92,8 @@ The Ostinato can handle multiple audio files.
 Multiple parts suffixed with : \_# will automatically be discovered and played back at random.
 
 
-## <a id="development"></a>Development
+**Note** audio files must be saved as 16bit wav, 32bit will NOT work
 
-Guidance and or pull requests welcome.
 
 #### Plans
 
